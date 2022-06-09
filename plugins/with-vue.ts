@@ -1,8 +1,8 @@
-import { Editor, Text, Node, Path, Operation, Transforms, Range } from 'slate'
+import { Editor, Node, Path, Operation, Transforms, Range } from 'slate'
 
 import { VueEditor } from './vue-editor'
 import { Key } from '../utils/key'
-import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY, NODE_TO_ELEMENT } from '../utils/weak-maps'
+import { EDITOR_TO_ON_CHANGE, NODE_TO_KEY } from '../utils/weak-maps'
 import {vueRuntime} from './vue-runtime';
 import {transform} from './runtime-util';
 import { isDOMText, getPlainText } from '../utils/dom'

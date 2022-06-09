@@ -1,5 +1,4 @@
-import { Node, Ancestor, Editor, Range } from 'slate'
-import Vue from 'vue';
+import { Node, Ancestor, Editor} from 'slate'
 import { Key } from './key'
 import { VueEditor } from '..';
 

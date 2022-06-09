@@ -1,9 +1,9 @@
 import Children from './children';
 import * as tsx from "vue-tsx-support";
-import {VueEditor, elementWatcherPlugin, SlateMixin, useEffect, useRef, vueRuntime} from '../plugins';
+import {VueEditor, SlateMixin, useEffect, useRef} from '../plugins';
 import { IS_FOCUSED, EDITOR_TO_ELEMENT, NODE_TO_ELEMENT, ELEMENT_TO_NODE, IS_READ_ONLY } from '../utils/weak-maps';
 import {DOMNode,isDOMNode, DOMRange, isDOMElement, isDOMText, isPlainTextOnlyPaste} from '../utils/dom';
-import {Transforms, Range,Editor, Element, Node} from 'slate';
+import {Transforms, Range,Editor, Element} from 'slate';
 import {DOMStaticRange} from '../utils/dom';
 import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY } from '../utils/environment'
 import Hotkeys from '../utils/hotkeys'
@@ -60,24 +60,6 @@ const hasEditableTarget = (
     VueEditor.hasDOMNode(editor, target, { editable: true })
   )
 };
-
-/**
- * Check if two DOM range objects are equal.
- */
-
-const isRangeEqual = (a: DOMRange, b: DOMRange) => {
-  return (
-    (a.startContainer === b.startContainer &&
-      a.startOffset === b.startOffset &&
-      a.endContainer === b.endContainer &&
-      a.endOffset === b.endOffset) ||
-    (a.startContainer === b.endContainer &&
-      a.startOffset === b.endOffset &&
-      a.endContainer === b.startContainer &&
-      a.endOffset === b.startOffset)
-  )
-};
-
 /**
  * Check if the target is in the editor.
  */
@@ -121,9 +103,6 @@ const getPlainText = (domNode: DOMNode) => {
 
   return text
 }
-
-let initPlaceholder = false
-
 // the contentEditable div
 export const Editable = tsx.component({
   // some global props will provide for child component
@@ -866,7 +845,7 @@ export const Editable = tsx.component({
               newDomRange.endOffset
             )
           }
-          const leafEl = newDomRange.startContainer.parentElement!
+          // const leafEl = newDomRange.startContainer.parentElement!
           // scrollIntoView(leafEl, {
           //   scrollMode: 'if-needed',
           //   boundary: el,

@@ -1,11 +1,11 @@
 // functional children component to render node
 // node is an union type: editor, element,text
 import * as tsx from "vue-tsx-support";
-import { Editor, Range, Element, NodeEntry, Ancestor, Descendant, Operation, Path } from 'slate';
+import { Editor, Range, Element, Descendant, Path } from 'slate';
 import TextComponent from './text'
 import ElementComponent from './element'
 import { VueEditor, elementWatcherPlugin, SlateMixin } from '../plugins';
-import { KEY_TO_VNODE, NODE_TO_INDEX, NODE_TO_KEY, NODE_TO_PARENT } from '../utils/weak-maps';
+import { KEY_TO_VNODE, NODE_TO_INDEX, NODE_TO_PARENT } from '../utils/weak-maps';
 import {fragment} from './fragment';
 
 /**
@@ -42,7 +42,7 @@ const Children: any = tsx.component({
       const n = childArr[i] as Descendant;
       const key = VueEditor.findKey(editor, n)
       const p = path.concat(i);
-      const range = Editor.range(editor, p)
+      Editor.range(editor, p);
       // set n and its index in children
       NODE_TO_INDEX.set(n, i)
       // set n and its parent
