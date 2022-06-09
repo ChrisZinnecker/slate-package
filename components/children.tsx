@@ -1,7 +1,7 @@
 // functional children component to render node
 // node is an union type: editor, element,text
 import * as tsx from "vue-tsx-support";
-import { Editor, Range, Element, Descendant, Path } from 'slate';
+import { Editor, Element, Descendant, Path } from 'slate';
 import TextComponent from './text'
 import ElementComponent from './element'
 import { VueEditor, elementWatcherPlugin, SlateMixin } from '../plugins';
