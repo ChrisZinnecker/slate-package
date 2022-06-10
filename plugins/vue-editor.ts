@@ -2,9 +2,9 @@
  * a copy of slate-react
  */
 
-import { Editor, Node, Operation, Path, Point, Range, Transforms } from 'slate';
+import {Editor, Node, Operation, Path, Point, Range, Transforms} from 'slate';
 
-import { Key } from '../utils/key'
+import {Key} from '../utils/key'
 import {
   EDITOR_TO_ELEMENT,
   ELEMENT_TO_NODE,
@@ -25,7 +25,7 @@ import {
   isDOMElement,
   normalizeDOMPoint,
 } from '../utils/dom'
-import { vueRuntimeFunc } from './vue-runtime';
+import {vueRuntimeFunc} from './vue-runtime';
 
 /**
  * A React and DOM-specific version of the `Editor` interface.
@@ -82,9 +82,8 @@ export const VueEditor = {
       child = parent
     }
 
-    throw new Error(
-      `Unable to find the path for Slate node: ${JSON.stringify(node)}`
-    )
+
+    console.error(`Unable to find the path for Slate node: ${JSON.stringify(node)}`)
   },
 
   /**
@@ -125,7 +124,7 @@ export const VueEditor = {
     IS_FOCUSED.set(editor, true)
 
     if (window.document.activeElement !== el) {
-      el.focus({ preventScroll: true })
+      el.focus({preventScroll: true})
     }
   },
 
@@ -134,7 +133,7 @@ export const VueEditor = {
    */
 
   deselect(editor: VueEditor): void {
-    const { selection } = editor
+    const {selection} = editor
     const domSelection = window.getSelection()
 
     if (domSelection && domSelection.rangeCount > 0) {
@@ -151,11 +150,11 @@ export const VueEditor = {
    */
 
   hasDOMNode(
-    editor: VueEditor,
-    target: DOMNode,
-    options: { editable?: boolean } = {}
+      editor: VueEditor,
+      target: DOMNode,
+      options: { editable?: boolean } = {}
   ): boolean {
-    const { editable = false } = options
+    const {editable = false} = options
     const editorEl = VueEditor.toDOMNode(editor, editor)
     let targetEl
 
@@ -165,11 +164,11 @@ export const VueEditor = {
     // https://github.com/ianstormtaylor/slate/issues/1819
     try {
       targetEl = (isDOMElement(target)
-        ? target
-        : target.parentElement) as HTMLElement
+          ? target
+          : target.parentElement) as HTMLElement
     } catch (err) {
       if (
-        !err.message.includes('Permission denied to access property "nodeType"')
+          !err.message.includes('Permission denied to access property "nodeType"')
       ) {
         throw err
       }
@@ -180,10 +179,10 @@ export const VueEditor = {
     }
 
     return (
-      targetEl.closest(`[data-slate-editor]`) === editorEl &&
-      (!editable ||
-        targetEl.isContentEditable ||
-        !!targetEl.getAttribute('data-slate-zero-width'))
+        targetEl.closest(`[data-slate-editor]`) === editorEl &&
+        (!editable ||
+            targetEl.isContentEditable ||
+            !!targetEl.getAttribute('data-slate-zero-width'))
     )
   },
 
@@ -209,11 +208,11 @@ export const VueEditor = {
 
   toDOMNode(editor: VueEditor, node: Node): HTMLElement {
     const domNode = Editor.isEditor(node)
-      ? EDITOR_TO_ELEMENT.get(editor)
-      : KEY_TO_ELEMENT.get(VueEditor.findKey(editor, node))
+        ? EDITOR_TO_ELEMENT.get(editor)
+        : KEY_TO_ELEMENT.get(VueEditor.findKey(editor, node))
     if (!domNode) {
       throw new Error(
-        `Cannot resolve a DOM node from Slate node: ${JSON.stringify(node)}`
+          `Cannot resolve a DOM node from Slate node: ${JSON.stringify(node)}`
       )
     }
 
@@ -231,8 +230,8 @@ export const VueEditor = {
 
     // If we're inside a void node, force the offset to 0, otherwise the zero
     // width spacing character will result in an incorrect offset of 1
-    if (Editor.void(editor, { at: point })) {
-      point = { path: point.path, offset: 0 }
+    if (Editor.void(editor, {at: point})) {
+      point = {path: point.path, offset: 0}
     }
 
     // For each leaf, we need to isolate its content, which means filtering
@@ -249,7 +248,7 @@ export const VueEditor = {
         continue
       }
 
-      const { length } = domNode.textContent
+      const {length} = domNode.textContent
       const attr = text.getAttribute('data-slate-length')
       const trueLength = attr == null ? length : parseInt(attr, 10)
       const end = start + trueLength
@@ -265,7 +264,7 @@ export const VueEditor = {
 
     if (!domPoint) {
       throw new Error(
-        `Cannot resolve a DOM point from Slate point: ${JSON.stringify(point)}`
+          `Cannot resolve a DOM point from Slate point: ${JSON.stringify(point)}`
       )
     }
 
@@ -282,12 +281,12 @@ export const VueEditor = {
    */
 
   toDOMRange(editor: VueEditor, range: Range): DOMRange {
-    const { anchor, focus } = range
+    const {anchor, focus} = range
     const isBackward = Range.isBackward(range)
     const domAnchor = VueEditor.toDOMPoint(editor, anchor)
     const domFocus = Range.isCollapsed(range)
-      ? domAnchor
-      : VueEditor.toDOMPoint(editor, focus)
+        ? domAnchor
+        : VueEditor.toDOMPoint(editor, focus)
 
     const domRange = window.document.createRange()
     const [startNode, startOffset] = isBackward ? domFocus : domAnchor
@@ -297,12 +296,12 @@ export const VueEditor = {
     // zero-width node has an offset of 1 so we have to check if we are in a zero-width node and
     // adjust the offset accordingly.
     const startEl = (isDOMElement(startNode)
-      ? startNode
-      : startNode.parentElement) as HTMLElement
+        ? startNode
+        : startNode.parentElement) as HTMLElement
     const isStartAtZeroWidth = !!startEl.getAttribute('data-slate-zero-width')
     const endEl = (isDOMElement(endNode)
-      ? endNode
-      : endNode.parentElement) as HTMLElement
+        ? endNode
+        : endNode.parentElement) as HTMLElement
     const isEndAtZeroWidth = !!endEl.getAttribute('data-slate-zero-width')
 
     domRange.setStart(startNode, isStartAtZeroWidth ? 1 : startOffset)
@@ -314,7 +313,7 @@ export const VueEditor = {
    * Find a Slate node from a native DOM `element`.
    */
 
-  toSlateNode(editor: VueEditor, domNode: DOMNode): Node {
+  toSlateNode(editor: VueEditor, domNode: DOMNode): Node | undefined {
     let domEl = isDOMElement(domNode) ? domNode : domNode.parentElement
 
     if (domEl && !domEl.hasAttribute('data-slate-node')) {
@@ -325,6 +324,7 @@ export const VueEditor = {
 
     if (!node) {
       console.error(`Cannot resolve a Slate node from DOM node: ${domEl}`)
+      return undefined
     }
 
     return node
@@ -334,45 +334,47 @@ export const VueEditor = {
    * Get the target range from a DOM `event`.
    */
 
-  findEventRange(editor: VueEditor, event: any): Range {
+  findEventRange(editor: VueEditor, event: any): Range | undefined {
     if ('nativeEvent' in event) {
       event = event.nativeEvent
     }
 
-    const { clientX: x, clientY: y, target } = event
+    const {clientX: x, clientY: y, target} = event
 
     if (x == null || y == null) {
       throw new Error(`Cannot resolve a Slate range from a DOM event: ${event}`)
     }
 
     const node = VueEditor.toSlateNode(editor, event.target)
-    const path = VueEditor.findPath(editor, node)
+    if (node) {
+      const path = VueEditor.findPath(editor, node)
 
-    // If the drop target is inside a void node, move it into either the
-    // next or previous node, depending on which side the `x` and `y`
-    // coordinates are closest to.
-    if (Editor.isVoid(editor, node)) {
-      const rect = target.getBoundingClientRect()
-      const isPrev = editor.isInline(node)
-        ? x - rect.left < rect.left + rect.width - x
-        : y - rect.top < rect.top + rect.height - y
+      // If the drop target is inside a void node, move it into either the
+      // next or previous node, depending on which side the `x` and `y`
+      // coordinates are closest to.
+      if (Editor.isVoid(editor, node)) {
+        const rect = target.getBoundingClientRect()
+        const isPrev = editor.isInline(node)
+            ? x - rect.left < rect.left + rect.width - x
+            : y - rect.top < rect.top + rect.height - y
 
-      const edge = Editor.point(editor, path, {
-        edge: isPrev ? 'start' : 'end',
-      })
-      const point = isPrev
-        ? Editor.before(editor, edge)
-        : Editor.after(editor, edge)
+        const edge = Editor.point(editor, path, {
+          edge: isPrev ? 'start' : 'end',
+        })
+        const point = isPrev
+            ? Editor.before(editor, edge)
+            : Editor.after(editor, edge)
 
-      if (point) {
-        const range = Editor.range(editor, point)
-        return range
+        if (point) {
+          const range = Editor.range(editor, point)
+          return range
+        }
       }
     }
 
     // Else resolve a range from the caret position where the drop occured.
     let domRange
-    const { document } = window
+    const {document} = window
 
     // COMPAT: In Firefox, `caretRangeFromPoint` doesn't exist. (2016/07/25)
     if (document.caretRangeFromPoint) {
@@ -400,7 +402,7 @@ export const VueEditor = {
    * Find a Slate point from a DOM selection's `domNode` and `domOffset`.
    */
 
-  toSlatePoint(editor: VueEditor, domPoint: DOMPoint): Point {
+  toSlatePoint(editor: VueEditor, domPoint: DOMPoint): Point | undefined {
     const [nearestNode, nearestOffset] = normalizeDOMPoint(domPoint)
     const parentNode = nearestNode.parentNode as DOMElement
     let textNode: DOMElement | null = null
@@ -451,9 +453,9 @@ export const VueEditor = {
       // space, so subtract 1 from the offset to account for the zero-width
       // space character.
       if (
-        domNode &&
-        offset === domNode.textContent!.length &&
-        parentNode.hasAttribute('data-slate-zero-width')
+          domNode &&
+          offset === domNode.textContent!.length &&
+          parentNode.hasAttribute('data-slate-zero-width')
       ) {
         offset--
       }
@@ -461,7 +463,7 @@ export const VueEditor = {
 
     if (!textNode) {
       throw new Error(
-        `Cannot resolve a Slate point from DOM point: ${domPoint}`
+          `Cannot resolve a Slate point from DOM point: ${domPoint}`
       )
     }
 
@@ -469,8 +471,11 @@ export const VueEditor = {
     // the select event fires twice, once for the old editor's `element`
     // first, and then afterwards for the correct `element`. (2017/03/03)
     const slateNode = VueEditor.toSlateNode(editor, textNode!)
-    const path = VueEditor.findPath(editor, slateNode)
-    return { path, offset }
+    if (slateNode) {
+      const path = VueEditor.findPath(editor, slateNode)
+      return {path, offset}
+    }
+    return undefined
   },
 
   /**
@@ -478,13 +483,13 @@ export const VueEditor = {
    */
 
   toSlateRange(
-    editor: VueEditor,
-    domRange: DOMRange | DOMStaticRange | DOMSelection
-  ): Range {
+      editor: VueEditor,
+      domRange: DOMRange | DOMStaticRange | DOMSelection
+  ): Range | undefined {
     const el =
-      domRange instanceof Selection
-        ? domRange.anchorNode
-        : domRange.startContainer
+        domRange instanceof Selection
+            ? domRange.anchorNode
+            : domRange.startContainer
     let anchorNode
     let anchorOffset
     let focusNode
@@ -508,22 +513,24 @@ export const VueEditor = {
     }
 
     if (
-      anchorNode == null ||
-      focusNode == null ||
-      anchorOffset == null ||
-      focusOffset == null
+        anchorNode == null ||
+        focusNode == null ||
+        anchorOffset == null ||
+        focusOffset == null
     ) {
       throw new Error(
-        `Cannot resolve a Slate range from DOM range: ${domRange}`
+          `Cannot resolve a Slate range from DOM range: ${domRange}`
       )
     }
 
     const anchor = VueEditor.toSlatePoint(editor, [anchorNode, anchorOffset])
     const focus = isCollapsed
-      ? anchor
-      : VueEditor.toSlatePoint(editor, [focusNode, focusOffset])
+        ? anchor
+        : VueEditor.toSlatePoint(editor, [focusNode, focusOffset])
 
-    return { anchor, focus }
+    if (anchor && focus) {
+      return {anchor, focus}
+    }
   },
 }
 

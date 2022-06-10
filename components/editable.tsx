@@ -25,11 +25,11 @@ const HAS_BEFORE_INPUT_SUPPORT = !(IS_FIREFOX || IS_EDGE_LEGACY)
  */
 
 const isTargetInsideVoid = (
-  editor: VueEditor,
-  target: EventTarget | null
+    editor: VueEditor,
+    target: EventTarget | null
 ): boolean => {
   const slateNode =
-    hasTarget(editor, target) && VueEditor.toSlateNode(editor, target)
+      hasTarget(editor, target) && VueEditor.toSlateNode(editor, target)
   return Editor.isVoid(editor, slateNode)
 }
 
@@ -38,8 +38,8 @@ const isTargetInsideVoid = (
  */
 
 const isEventHandled = (
-  event: any,
-  handler?: (event: any) => void
+    event: any,
+    handler?: (event: any) => void
 ) => {
   if (!handler) {
     return false
@@ -52,12 +52,12 @@ const isEventHandled = (
  * Check if the target is editable and in the editor.
  */
 const hasEditableTarget = (
-  editor: VueEditor,
-  target: EventTarget | null
+    editor: VueEditor,
+    target: EventTarget | null
 ): target is DOMNode => {
   return (
-    isDOMNode(target) &&
-    VueEditor.hasDOMNode(editor, target, { editable: true })
+      isDOMNode(target) &&
+      VueEditor.hasDOMNode(editor, target, { editable: true })
   )
 };
 /**
@@ -65,8 +65,8 @@ const hasEditableTarget = (
  */
 
 const hasTarget = (
-  editor: VueEditor,
-  target: EventTarget | null
+    editor: VueEditor,
+    target: EventTarget | null
 ): target is DOMNode => {
   return isDOMNode(target) && VueEditor.hasDOMNode(editor, target)
 };
@@ -159,18 +159,20 @@ export const Editable = tsx.component({
     _onClick(event: IEvent) {
       const editor = (this as any).$editor
       if (
-        !this.readOnly &&
-        hasTarget(editor, event.target) &&
-        isDOMNode(event.target) &&
-        !isEventHandled(event, (this as any).onClick)
+          !this.readOnly &&
+          hasTarget(editor, event.target) &&
+          isDOMNode(event.target) &&
+          !isEventHandled(event, (this as any).onClick)
       ) {
         const node = VueEditor.toSlateNode(editor, event.target)
-        const path = VueEditor.findPath(editor, node)
-        const start = Editor.start(editor, path)
+        if (node) {
+          const path = VueEditor.findPath(editor, node)
+          const start = Editor.start(editor, path)
 
-        if (Editor.void(editor, { at: start })) {
-          const range = Editor.range(editor, start)
-          Transforms.select(editor, range)
+          if (Editor.void(editor, { at: start })) {
+            const range = Editor.range(editor, start)
+            Transforms.select(editor, range)
+          }
         }
       }
     },
@@ -196,16 +198,18 @@ export const Editable = tsx.component({
         const { anchorNode, focusNode } = domSelection
 
         const anchorNodeSelectable =
-          hasEditableTarget(editor, anchorNode) ||
-          isTargetInsideVoid(editor, anchorNode)
+            hasEditableTarget(editor, anchorNode) ||
+            isTargetInsideVoid(editor, anchorNode)
 
         const focusNodeSelectable =
-          hasEditableTarget(editor, focusNode) ||
-          isTargetInsideVoid(editor, focusNode)
+            hasEditableTarget(editor, focusNode) ||
+            isTargetInsideVoid(editor, focusNode)
 
         if (anchorNodeSelectable && focusNodeSelectable) {
           const range = VueEditor.toSlateRange(editor, domSelection)
-          Transforms.select(editor, range)
+          if (range) {
+            Transforms.select(editor, range)
+          }
         } else {
           Transforms.deselect(editor)
         }
@@ -222,9 +226,9 @@ export const Editable = tsx.component({
         return
       }
       if (
-        !this.readOnly &&
-        hasEditableTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onBeforeInput)
+          !this.readOnly &&
+          hasEditableTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onBeforeInput)
       ) {
         const { selection } = editor
         const { inputType: type } = event
@@ -233,8 +237,8 @@ export const Editable = tsx.component({
         // These two types occur while a user is composing text and can't be
         // cancelled. Let them through and wait for the composition to end.
         if (
-          type === 'insertCompositionText' ||
-          type === 'deleteCompositionText'
+            type === 'insertCompositionText' ||
+            type === 'deleteCompositionText'
         ) {
           return
         }
@@ -250,7 +254,7 @@ export const Editable = tsx.component({
           if (targetRange) {
             const range = VueEditor.toSlateRange(editor, targetRange)
 
-            if (!selection || !Range.equals(selection, range)) {
+            if (range && (!selection || !Range.equals(selection, range))) {
               Transforms.select(editor, range)
             }
           }
@@ -259,9 +263,9 @@ export const Editable = tsx.component({
         // COMPAT: If the selection is expanded, even if the command seems like
         // a delete forward/backward command it should delete the selection.
         if (
-          selection &&
-          Range.isExpanded(selection) &&
-          type.startsWith('delete')
+            selection &&
+            Range.isExpanded(selection) &&
+            type.startsWith('delete')
         ) {
           Editor.deleteFragment(editor)
           return
@@ -348,8 +352,8 @@ export const Editable = tsx.component({
     _onCompositionEnd(event: any) {
       const editor = (this as any).$editor;
       if (
-        hasEditableTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onCompositionEnd)
+          hasEditableTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onCompositionEnd)
       ) {
         (this as any).isComposing = false
 
@@ -365,8 +369,8 @@ export const Editable = tsx.component({
     _onCompositionStart(event: IEvent) {
       const editor = (this as any).$editor
       if (
-        hasEditableTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onCompositionStart)
+          hasEditableTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onCompositionStart)
       ) {
         (this as any).isComposing = true
       }
@@ -374,9 +378,9 @@ export const Editable = tsx.component({
     _onKeyDown(event: any) {
       const editor = (this as any).$editor
       if (
-        !this.readOnly &&
-        hasEditableTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onKeyDown)
+          !this.readOnly &&
+          hasEditableTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onKeyDown)
       ) {
         const nativeEvent = event
         const { selection } = editor
@@ -485,9 +489,9 @@ export const Editable = tsx.component({
           // We don't have a core behavior for these, but they change the
           // DOM if we don't prevent them, so we have to.
           if (
-            Hotkeys.isBold(nativeEvent) ||
-            Hotkeys.isItalic(nativeEvent) ||
-            Hotkeys.isTransposeCharacter(nativeEvent)
+              Hotkeys.isBold(nativeEvent) ||
+              Hotkeys.isItalic(nativeEvent) ||
+              Hotkeys.isTransposeCharacter(nativeEvent)
           ) {
             event.preventDefault()
             return
@@ -576,10 +580,10 @@ export const Editable = tsx.component({
     _onFocus(event: any) {
       const editor = (this as any).$editor
       if (
-        !this.readOnly &&
-        !(this as any).isUpdatingSelection &&
-        hasEditableTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onFocus)
+          !this.readOnly &&
+          !(this as any).isUpdatingSelection &&
+          hasEditableTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onFocus)
       ) {
         const el = VueEditor.toDOMNode(editor, editor)
         ;(this as any).latestElement = window.document.activeElement
@@ -598,10 +602,10 @@ export const Editable = tsx.component({
     _onBlur(event: any) {
       const editor = (this as any).$editor
       if (
-        this.readOnly ||
-        (this as any).isUpdatingSelection ||
-        !hasEditableTarget(editor, event.target) ||
-        !isEventHandled(event, (this as any).onBlur)
+          this.readOnly ||
+          (this as any).isUpdatingSelection ||
+          !hasEditableTarget(editor, event.target) ||
+          !isEventHandled(event, (this as any).onBlur)
       ) {
         return
       }
@@ -627,8 +631,8 @@ export const Editable = tsx.component({
       // COMPAT: The event should be ignored if the focus is moving from
       // the editor to inside a void node's spacer element.
       if (
-        isDOMElement(relatedTarget) &&
-        relatedTarget.hasAttribute('data-slate-spacer')
+          isDOMElement(relatedTarget) &&
+          relatedTarget.hasAttribute('data-slate-spacer')
       ) {
         return
       }
@@ -637,9 +641,9 @@ export const Editable = tsx.component({
       // non- editable section of an element that isn't a void node (eg.
       // a list item of the check list example).
       if (
-        relatedTarget != null &&
-        isDOMNode(relatedTarget) &&
-        VueEditor.hasDOMNode(editor, relatedTarget)
+          relatedTarget != null &&
+          isDOMNode(relatedTarget) &&
+          VueEditor.hasDOMNode(editor, relatedTarget)
       ) {
         const node = VueEditor.toSlateNode(editor, relatedTarget)
 
@@ -653,8 +657,8 @@ export const Editable = tsx.component({
     _onCopy(event: any) {
       const editor = (this as any).$editor
       if (
-        hasEditableTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onCopy)
+          hasEditableTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onCopy)
       ) {
         event.preventDefault()
         VueEditor.setFragmentData(editor, event.clipboardData)
@@ -664,11 +668,11 @@ export const Editable = tsx.component({
       const editor = (this as any).$editor
       const {readOnly} = this
       if (
-        (!HAS_BEFORE_INPUT_SUPPORT ||
-          isPlainTextOnlyPaste(event)) &&
-        !readOnly &&
-        hasEditableTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onPaste)
+          (!HAS_BEFORE_INPUT_SUPPORT ||
+              isPlainTextOnlyPaste(event)) &&
+          !readOnly &&
+          hasEditableTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onPaste)
       ) {
         event.preventDefault()
         VueEditor.insertData(editor, event.clipboardData)
@@ -678,9 +682,9 @@ export const Editable = tsx.component({
       const editor = (this as any).$editor
       const {readOnly} = this
       if (
-        !readOnly &&
-        hasEditableTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onCut)
+          !readOnly &&
+          hasEditableTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onCut)
       ) {
         event.preventDefault()
         VueEditor.setFragmentData(editor, event.clipboardData)
@@ -694,8 +698,8 @@ export const Editable = tsx.component({
     _onDragOver(event: any) {
       const editor = (this as any).$editor
       if (
-        hasTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onDragOver)
+          hasTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onDragOver)
       ) {
         // Only when the target is void, call `preventDefault` to signal
         // that drops are allowed. Editable content is droppable by
@@ -710,18 +714,20 @@ export const Editable = tsx.component({
     _onDragStart(event: any) {
       const editor = (this as any).$editor
       if (
-        hasTarget(editor, event.target) &&
-        !isEventHandled(event, (this as any).onDragStart)
+          hasTarget(editor, event.target) &&
+          !isEventHandled(event, (this as any).onDragStart)
       ) {
         const node = VueEditor.toSlateNode(editor, event.target)
-        const path = VueEditor.findPath(editor, node)
-        const voidMatch = Editor.void(editor, { at: path })
+        if (node) {
+          const path = VueEditor.findPath(editor, node)
+          const voidMatch = Editor.void(editor, { at: path })
 
-        // If starting a drag on a void node, make sure it is selected
-        // so that it shows up in the selection's fragment.
-        if (voidMatch) {
-          const range = Editor.range(editor, path)
-          Transforms.select(editor, range)
+          // If starting a drag on a void node, make sure it is selected
+          // so that it shows up in the selection's fragment.
+          if (voidMatch) {
+            const range = Editor.range(editor, path)
+            Transforms.select(editor, range)
+          }
         }
 
         VueEditor.setFragmentData(editor, event.clipboardData)
@@ -730,23 +736,25 @@ export const Editable = tsx.component({
     _onDrop(event: any) {
       const editor = (this as any).$editor
       if (
-        hasTarget(editor, event.target) &&
-        !this.readOnly &&
-        !isEventHandled(event, (this as any).onDrop)
+          hasTarget(editor, event.target) &&
+          !this.readOnly &&
+          !isEventHandled(event, (this as any).onDrop)
       ) {
         // COMPAT: Certain browsers don't fire `beforeinput` events at all, and
         // Chromium browsers don't properly fire them for files being
         // dropped into a `contenteditable`. (2019/11/26)
         // https://bugs.chromium.org/p/chromium/issues/detail?id=1028668
         if (
-          !HAS_BEFORE_INPUT_SUPPORT ||
-          (!IS_SAFARI && event.dataTransfer.files.length > 0)
+            !HAS_BEFORE_INPUT_SUPPORT ||
+            (!IS_SAFARI && event.dataTransfer.files.length > 0)
         ) {
           event.preventDefault()
           const range = VueEditor.findEventRange(editor, event)
           const data = event.dataTransfer
-          Transforms.select(editor, range)
-          VueEditor.insertData(editor, data)
+          if (range) {
+            Transforms.select(editor, range)
+            VueEditor.insertData(editor, data)
+          }
         }
       }
     }
@@ -807,18 +815,20 @@ export const Editable = tsx.component({
         const editorElement = EDITOR_TO_ELEMENT.get(editor)!
         let hasDomSelectionInEditor = false
         if (
-          editorElement.contains(domSelection.anchorNode) &&
-          editorElement.contains(domSelection.focusNode)
+            editorElement.contains(domSelection.anchorNode) &&
+            editorElement.contains(domSelection.focusNode)
         ) {
           hasDomSelectionInEditor = true
         }
 
         // If the DOM selection is in the editor and the editor selection is already correct, we're done.
+        const range = VueEditor.toSlateRange(editor, domSelection)
         if (
-          hasDomSelection &&
-          hasDomSelectionInEditor &&
-          selection &&
-          Range.equals(VueEditor.toSlateRange(editor, domSelection), selection)
+            hasDomSelection &&
+            hasDomSelectionInEditor &&
+            selection &&
+            range &&
+            Range.equals(range, selection)
         ) {
           return
         }
@@ -832,17 +842,17 @@ export const Editable = tsx.component({
         if (newDomRange) {
           if (Range.isBackward(selection)) {
             domSelection.setBaseAndExtent(
-              newDomRange.endContainer,
-              newDomRange.endOffset,
-              newDomRange.startContainer,
-              newDomRange.startOffset
+                newDomRange.endContainer,
+                newDomRange.endOffset,
+                newDomRange.startContainer,
+                newDomRange.startOffset
             )
           } else {
             domSelection.setBaseAndExtent(
-              newDomRange.startContainer,
-              newDomRange.startOffset,
-              newDomRange.endContainer,
-              newDomRange.endOffset
+                newDomRange.startContainer,
+                newDomRange.startOffset,
+                newDomRange.endContainer,
+                newDomRange.endOffset
             )
           }
           // const leafEl = newDomRange.startContainer.parentElement!
@@ -907,34 +917,34 @@ export const Editable = tsx.component({
       autocapitalize: !HAS_BEFORE_INPUT_SUPPORT ? undefined : this.autoCapitalize,
     }
     return (
-      <div
-        // COMPAT: The Grammarly Chrome extension works by changing the DOM
-        // out from under `contenteditable` elements, which leads to weird
-        // behaviors so we have to disable it like editor. (2017/04/24)
-        data-gramm={false}
-        role={this.readOnly ? undefined : 'textbox'}
-        ref = {ref.id}
-        contenteditable={this.readOnly ? false : true}
-        data-slate-editor
-        data-slate-node="value"
-        style={{
-         // Prevent the default outline styles.
-         outline: 'none',
-         // Preserve adjacent whitespace and new lines.
-         whiteSpace: 'pre-wrap',
-         // Allow words to break if they are too long.
-         wordWrap: 'break-word',
-         // Allow for passed-in styles to override anything.
-         // ...style,
-        }}
-        {...{on}}
-        {...{attrs}}
+        <div
+            // COMPAT: The Grammarly Chrome extension works by changing the DOM
+            // out from under `contenteditable` elements, which leads to weird
+            // behaviors so we have to disable it like editor. (2017/04/24)
+            data-gramm={false}
+            role={this.readOnly ? undefined : 'textbox'}
+            ref = {ref.id}
+            contenteditable={this.readOnly ? false : true}
+            data-slate-editor
+            data-slate-node="value"
+            style={{
+              // Prevent the default outline styles.
+              outline: 'none',
+              // Preserve adjacent whitespace and new lines.
+              whiteSpace: 'pre-wrap',
+              // Allow words to break if they are too long.
+              wordWrap: 'break-word',
+              // Allow for passed-in styles to override anything.
+              // ...style,
+            }}
+            {...{on}}
+            {...{attrs}}
         >
-        <Children
-          node={editor}
-          selection={editor.selection}
-        />
-      </div>
+          <Children
+              node={editor}
+              selection={editor.selection}
+          />
+        </div>
     )
   }
 })
