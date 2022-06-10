@@ -57,7 +57,7 @@ export const VueEditor = {
    * Find the path of Slate node.
    */
 
-  findPath(editor: VueEditor, node: Node): Path {
+  findPath(editor: VueEditor, node: Node): Path | undefined {
     const path: Path = []
     let child = node
 
@@ -82,8 +82,9 @@ export const VueEditor = {
       child = parent
     }
 
-
-    console.error(`Unable to find the path for Slate node: ${JSON.stringify(node)}`)
+    console.error(
+        `Unable to find the path for Slate node: ${JSON.stringify(node)}`
+    )
   },
 
   /**
@@ -348,26 +349,27 @@ export const VueEditor = {
     const node = VueEditor.toSlateNode(editor, event.target)
     if (node) {
       const path = VueEditor.findPath(editor, node)
+      if (path) {
+        // If the drop target is inside a void node, move it into either the
+        // next or previous node, depending on which side the `x` and `y`
+        // coordinates are closest to.
+        if (Editor.isVoid(editor, node)) {
+          const rect = target.getBoundingClientRect()
+          const isPrev = editor.isInline(node)
+              ? x - rect.left < rect.left + rect.width - x
+              : y - rect.top < rect.top + rect.height - y
 
-      // If the drop target is inside a void node, move it into either the
-      // next or previous node, depending on which side the `x` and `y`
-      // coordinates are closest to.
-      if (Editor.isVoid(editor, node)) {
-        const rect = target.getBoundingClientRect()
-        const isPrev = editor.isInline(node)
-            ? x - rect.left < rect.left + rect.width - x
-            : y - rect.top < rect.top + rect.height - y
+          const edge = Editor.point(editor, path, {
+            edge: isPrev ? 'start' : 'end',
+          })
+          const point = isPrev
+              ? Editor.before(editor, edge)
+              : Editor.after(editor, edge)
 
-        const edge = Editor.point(editor, path, {
-          edge: isPrev ? 'start' : 'end',
-        })
-        const point = isPrev
-            ? Editor.before(editor, edge)
-            : Editor.after(editor, edge)
-
-        if (point) {
-          const range = Editor.range(editor, point)
-          return range
+          if (point) {
+            const range = Editor.range(editor, point)
+            return range
+          }
         }
       }
     }
@@ -473,7 +475,9 @@ export const VueEditor = {
     const slateNode = VueEditor.toSlateNode(editor, textNode!)
     if (slateNode) {
       const path = VueEditor.findPath(editor, slateNode)
-      return {path, offset}
+      if (path) {
+        return {path, offset}
+      }
     }
     return undefined
   },

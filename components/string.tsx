@@ -21,9 +21,9 @@ const TextString = tsx.component({
   render() {
     const { text, isTrailing = false } = this
     return (
-      <span data-slate-string>
+        <span data-slate-string>
         {text}
-        {isTrailing ? '\n' : null}
+          {isTrailing ? '\n' : null}
       </span>
     )
   }
@@ -36,12 +36,12 @@ const TextString = tsx.component({
 const ZeroWidthString: TsxComponent<ZeroWidthStringProps> = ({ props }) => {
   const { length = 0, isLineBreak = false } = props as ZeroWidthStringProps
   return (
-    <span
-      data-slate-zero-width={isLineBreak ? 'n' : 'z'}
-      data-slate-length={length}
-    >
+      <span
+          data-slate-zero-width={isLineBreak ? 'n' : 'z'}
+          data-slate-length={length}
+      >
       {'\uFEFF'}
-      {isLineBreak ? <br /> : null}
+        {isLineBreak ? <br /> : null}
     </span>
   )
 }
@@ -61,7 +61,6 @@ const string = tsx.component({
   render() {
     const { leaf, editor, isLast, parent, text } = this as any
     const path = VueEditor.findPath(editor, text)
-    const parentPath = Path.parent(path)
 
     // COMPAT: Render text inside void nodes with a zero-width space.
     // So the node can contain selection but the text is not visible.
@@ -72,13 +71,16 @@ const string = tsx.component({
     // COMPAT: If this is the last text node in an empty block, render a zero-
     // width space that will convert into a line break when copying and pasting
     // to support expected plain text.
-    if (
-      leaf.text === '' &&
-      parent.children[parent.children.length - 1] === text &&
-      !editor.isInline(parent) &&
-      Editor.string(editor, parentPath) === ''
-    ) {
-      return <ZeroWidthString isLineBreak={true} />
+    if (path) {
+      const parentPath = Path.parent(path)
+      if (
+          leaf.text === '' &&
+          parent.children[parent.children.length - 1] === text &&
+          !editor.isInline(parent) &&
+          Editor.string(editor, parentPath) === ''
+      ) {
+        return <ZeroWidthString isLineBreak={true} />
+      }
     }
 
     // COMPAT: If the text is empty, it's because it's on the edge of an inline

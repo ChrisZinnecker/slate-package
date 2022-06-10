@@ -1,18 +1,20 @@
 import Children from './children';
 import * as tsx from "vue-tsx-support";
 import {VueEditor, SlateMixin, useEffect, useRef} from '../plugins';
-import { IS_FOCUSED, EDITOR_TO_ELEMENT, NODE_TO_ELEMENT, ELEMENT_TO_NODE, IS_READ_ONLY } from '../utils/weak-maps';
-import {DOMNode,isDOMNode, isDOMElement, isDOMText, isPlainTextOnlyPaste} from '../utils/dom';
-import {Transforms, Range,Editor, Element} from 'slate';
+import {IS_FOCUSED, EDITOR_TO_ELEMENT, NODE_TO_ELEMENT, ELEMENT_TO_NODE, IS_READ_ONLY} from '../utils/weak-maps';
+import {DOMNode, isDOMNode, isDOMElement, isDOMText, isPlainTextOnlyPaste} from '../utils/dom';
+import {Transforms, Range, Editor, Element} from 'slate';
 import {DOMStaticRange} from '../utils/dom';
-import { IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY } from '../utils/environment'
+import {IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY} from '../utils/environment'
 import Hotkeys from '../utils/hotkeys'
-import { addOnBeforeInput } from '../utils/beforeInput';
+import {addOnBeforeInput} from '../utils/beforeInput';
 
 interface IEvent extends Event {
   data: string | null
   dataTransfer: DataTransfer | null
+
   getTargetRanges(): DOMStaticRange[]
+
   inputType: string
   isComposing: boolean
 }
@@ -57,7 +59,7 @@ const hasEditableTarget = (
 ): target is DOMNode => {
   return (
       isDOMNode(target) &&
-      VueEditor.hasDOMNode(editor, target, { editable: true })
+      VueEditor.hasDOMNode(editor, target, {editable: true})
   )
 };
 /**
@@ -167,20 +169,22 @@ export const Editable = tsx.component({
         const node = VueEditor.toSlateNode(editor, event.target)
         if (node) {
           const path = VueEditor.findPath(editor, node)
-          const start = Editor.start(editor, path)
+          if (path) {
+            const start = Editor.start(editor, path)
 
-          if (Editor.void(editor, { at: start })) {
-            const range = Editor.range(editor, start)
-            Transforms.select(editor, range)
+            if (Editor.void(editor, {at: start})) {
+              const range = Editor.range(editor, start)
+              Transforms.select(editor, range)
+            }
           }
         }
       }
     },
     onSelectionchange() {
-      const { readOnly } = this;
+      const {readOnly} = this;
       const editor = (this as any).$editor
       if (!readOnly && !(this as any).isComposing && !(this as any).isUpdatingSelection) {
-        const { activeElement } = window.document
+        const {activeElement} = window.document
         const el = VueEditor.toDOMNode(editor, editor)
         const domSelection = window.getSelection()
 
@@ -195,7 +199,7 @@ export const Editable = tsx.component({
           return Transforms.deselect(editor)
         }
 
-        const { anchorNode, focusNode } = domSelection
+        const {anchorNode, focusNode} = domSelection
 
         const anchorNodeSelectable =
             hasEditableTarget(editor, anchorNode) ||
@@ -218,7 +222,7 @@ export const Editable = tsx.component({
     _onBeforeInput(event: IEvent) {
       const editor = (this as any).$editor;
       // in FireFox, we use a dispatchEvent and only support insertData
-      if(IS_FIREFOX) {
+      if (IS_FIREFOX) {
         event.preventDefault()
         event.stopPropagation()
         const text = (event as any).detail as string
@@ -230,8 +234,8 @@ export const Editable = tsx.component({
           hasEditableTarget(editor, event.target) &&
           !isEventHandled(event, (this as any).onBeforeInput)
       ) {
-        const { selection } = editor
-        const { inputType: type } = event
+        const {selection} = editor
+        const {inputType: type} = event
         const data = event.dataTransfer || event.data || undefined
 
         // These two types occur while a user is composing text and can't be
@@ -291,38 +295,38 @@ export const Editable = tsx.component({
           }
 
           case 'deleteEntireSoftLine': {
-            Editor.deleteBackward(editor, { unit: 'line' })
-            Editor.deleteForward(editor, { unit: 'line' })
+            Editor.deleteBackward(editor, {unit: 'line'})
+            Editor.deleteForward(editor, {unit: 'line'})
             break
           }
 
           case 'deleteHardLineBackward': {
-            Editor.deleteBackward(editor, { unit: 'block' })
+            Editor.deleteBackward(editor, {unit: 'block'})
             break
           }
 
           case 'deleteSoftLineBackward': {
-            Editor.deleteBackward(editor, { unit: 'line' })
+            Editor.deleteBackward(editor, {unit: 'line'})
             break
           }
 
           case 'deleteHardLineForward': {
-            Editor.deleteForward(editor, { unit: 'block' })
+            Editor.deleteForward(editor, {unit: 'block'})
             break
           }
 
           case 'deleteSoftLineForward': {
-            Editor.deleteForward(editor, { unit: 'line' })
+            Editor.deleteForward(editor, {unit: 'line'})
             break
           }
 
           case 'deleteWordBackward': {
-            Editor.deleteBackward(editor, { unit: 'word' })
+            Editor.deleteBackward(editor, {unit: 'word'})
             break
           }
 
           case 'deleteWordForward': {
-            Editor.deleteForward(editor, { unit: 'word' })
+            Editor.deleteForward(editor, {unit: 'word'})
             break
           }
 
@@ -383,7 +387,7 @@ export const Editable = tsx.component({
           !isEventHandled(event, (this as any).onKeyDown)
       ) {
         const nativeEvent = event
-        const { selection } = editor
+        const {selection} = editor
 
         // COMPAT: Since we prevent the default behavior on
         // `beforeinput` events, the browser doesn't think there's ever
@@ -415,13 +419,13 @@ export const Editable = tsx.component({
         // (2017/10/17)
         if (Hotkeys.isMoveLineBackward(nativeEvent)) {
           event.preventDefault()
-          Transforms.move(editor, { unit: 'line', reverse: true })
+          Transforms.move(editor, {unit: 'line', reverse: true})
           return
         }
 
         if (Hotkeys.isMoveLineForward(nativeEvent)) {
           event.preventDefault()
-          Transforms.move(editor, { unit: 'line' })
+          Transforms.move(editor, {unit: 'line'})
           return
         }
 
@@ -437,7 +441,7 @@ export const Editable = tsx.component({
 
         if (Hotkeys.isExtendLineForward(nativeEvent)) {
           event.preventDefault()
-          Transforms.move(editor, { unit: 'line', edge: 'focus' })
+          Transforms.move(editor, {unit: 'line', edge: 'focus'})
           return
         }
 
@@ -450,9 +454,9 @@ export const Editable = tsx.component({
           event.preventDefault()
 
           if (selection && Range.isCollapsed(selection)) {
-            Transforms.move(editor, { reverse: true })
+            Transforms.move(editor, {reverse: true})
           } else {
-            Transforms.collapse(editor, { edge: 'start' })
+            Transforms.collapse(editor, {edge: 'start'})
           }
 
           return
@@ -464,7 +468,7 @@ export const Editable = tsx.component({
           if (selection && Range.isCollapsed(selection)) {
             Transforms.move(editor)
           } else {
-            Transforms.collapse(editor, { edge: 'end' })
+            Transforms.collapse(editor, {edge: 'end'})
           }
 
           return
@@ -472,13 +476,13 @@ export const Editable = tsx.component({
 
         if (Hotkeys.isMoveWordBackward(nativeEvent)) {
           event.preventDefault()
-          Transforms.move(editor, { unit: 'word', reverse: true })
+          Transforms.move(editor, {unit: 'word', reverse: true})
           return
         }
 
         if (Hotkeys.isMoveWordForward(nativeEvent)) {
           event.preventDefault()
-          Transforms.move(editor, { unit: 'word' })
+          Transforms.move(editor, {unit: 'word'})
           return
         }
 
@@ -533,7 +537,7 @@ export const Editable = tsx.component({
             if (selection && Range.isExpanded(selection)) {
               Editor.deleteFragment(editor)
             } else {
-              Editor.deleteBackward(editor, { unit: 'line' })
+              Editor.deleteBackward(editor, {unit: 'line'})
             }
 
             return
@@ -545,7 +549,7 @@ export const Editable = tsx.component({
             if (selection && Range.isExpanded(selection)) {
               Editor.deleteFragment(editor)
             } else {
-              Editor.deleteForward(editor, { unit: 'line' })
+              Editor.deleteForward(editor, {unit: 'line'})
             }
 
             return
@@ -557,7 +561,7 @@ export const Editable = tsx.component({
             if (selection && Range.isExpanded(selection)) {
               Editor.deleteFragment(editor)
             } else {
-              Editor.deleteBackward(editor, { unit: 'word' })
+              Editor.deleteBackward(editor, {unit: 'word'})
             }
 
             return
@@ -569,7 +573,7 @@ export const Editable = tsx.component({
             if (selection && Range.isExpanded(selection)) {
               Editor.deleteFragment(editor)
             } else {
-              Editor.deleteForward(editor, { unit: 'word' })
+              Editor.deleteForward(editor, {unit: 'word'})
             }
 
             return
@@ -618,7 +622,7 @@ export const Editable = tsx.component({
         return
       }
 
-      const { relatedTarget } = event
+      const {relatedTarget} = event
       const el = VueEditor.toDOMNode(editor, editor)
 
       // COMPAT: The event should be ignored if the focus is returning
@@ -688,7 +692,7 @@ export const Editable = tsx.component({
       ) {
         event.preventDefault()
         VueEditor.setFragmentData(editor, event.clipboardData)
-        const { selection } = editor
+        const {selection} = editor
 
         if (selection && Range.isExpanded(selection)) {
           Editor.deleteFragment(editor)
@@ -720,13 +724,15 @@ export const Editable = tsx.component({
         const node = VueEditor.toSlateNode(editor, event.target)
         if (node) {
           const path = VueEditor.findPath(editor, node)
-          const voidMatch = Editor.void(editor, { at: path })
+          if (path) {
+            const voidMatch = Editor.void(editor, {at: path})
 
-          // If starting a drag on a void node, make sure it is selected
-          // so that it shows up in the selection's fragment.
-          if (voidMatch) {
-            const range = Editor.range(editor, path)
-            Transforms.select(editor, range)
+            // If starting a drag on a void node, make sure it is selected
+            // so that it shows up in the selection's fragment.
+            if (voidMatch) {
+              const range = Editor.range(editor, path)
+              Transforms.select(editor, range)
+            }
           }
         }
 
@@ -764,9 +770,9 @@ export const Editable = tsx.component({
     const editor = (this as any).$editor;
     IS_READ_ONLY.set(editor, this.readOnly)
 
-    const initListener = ()=>{
+    const initListener = () => {
       // Attach a native DOM event handler for `selectionchange`
-      useEffect(()=>{
+      useEffect(() => {
         document.addEventListener('selectionchange', (this as any).onSelectionchange)
         return () => {
           document.removeEventListener('selectionchange', (this as any).onSelectionchange)
@@ -777,7 +783,7 @@ export const Editable = tsx.component({
       useEffect(() => {
         if (ref.current && this.autoFocus) {
           // can't focus in current event loop?
-          setTimeout(()=>{
+          setTimeout(() => {
             ref.current.focus()
           }, 0)
         }
@@ -797,7 +803,7 @@ export const Editable = tsx.component({
     };
     const updateSelection = () => {
       useEffect(() => {
-        const { selection } = editor
+        const {selection} = editor
         const domSelection = window.getSelection()
 
         if ((this as any).isComposing || !domSelection || !VueEditor.isFocused(editor)) {
@@ -886,7 +892,7 @@ export const Editable = tsx.component({
     // needs to be manually focused.
     updateAutoFocus();
     // patch beforeinput in FireFox
-    if(IS_FIREFOX) {
+    if (IS_FIREFOX) {
       useEffect(() => {
         addOnBeforeInput(ref.current, true)
       }, [])
@@ -923,7 +929,7 @@ export const Editable = tsx.component({
             // behaviors so we have to disable it like editor. (2017/04/24)
             data-gramm={false}
             role={this.readOnly ? undefined : 'textbox'}
-            ref = {ref.id}
+            ref={ref.id}
             contenteditable={this.readOnly ? false : true}
             data-slate-editor
             data-slate-node="value"

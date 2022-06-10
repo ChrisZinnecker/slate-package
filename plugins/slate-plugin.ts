@@ -26,9 +26,11 @@ const createGvm = () => {
             if(key) {
               const {id} = key
               const p = VueEditor.findPath(editor, node)
-              const range = Editor.range(editor, p)
-              const selected = Range.intersection(range, selection)
-              this.$set(this.selected, id, !!selected)
+              if (p) {
+                const range = Editor.range(editor, p)
+                const selected = Range.intersection(range, selection)
+                this.$set(this.selected, id, !!selected)
+              }
             }
           })
         }
