@@ -324,7 +324,7 @@ export const VueEditor = {
     const node = domEl ? ELEMENT_TO_NODE.get(domEl as HTMLElement) : null
 
     if (!node) {
-      throw new Error(`Cannot resolve a Slate node from DOM node: ${domEl}`)
+      console.error(`Cannot resolve a Slate node from DOM node: ${domEl}`)
     }
 
     return node
