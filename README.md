@@ -1,14 +1,4 @@
-# Slate-vue
-
-[![Build Status](https://img.shields.io/github/workflow/status/marsprince/slate-vue/Test)](https://github.com/marsprince/slate-vue/actions?query=workflow%3ATest)
-[![NPM Version](https://img.shields.io/npm/v/slate-vue?color=brightgreen)](https://www.npmjs.com/package/slate-vue)
-[![NPM Size](https://img.shields.io/badge/gzip-36kb-brightgreen)](https://unpkg.com/slate-vue/dist/index.es.js)
-
-An implement for [slate](https://github.com/ianstormtaylor/slate) supported vue2 and vue3（in development）. Most of the slate-react's components can be easily migrated by no code change.
-
-All slate-react's example is supported now.
-
-For principles's question, Please read slate's [docs](https://docs.slatejs.org/) first!
+# Slate-vue for vue2.x
 
 ## Install
 
@@ -25,6 +15,8 @@ yarn add slate-vue
 ```
 
 ## Usage
+
+### quick start
 
 import
 
@@ -69,24 +61,74 @@ use
 </script>
 ```
 
-See full vue2.x document in [slate-vue](https://github.com/marsprince/slate-vue/tree/master/packages/slate-vue)
+### more detail
 
-## Examples
+Vue's [jsx](https://github.com/vuejs/jsx) and [tsx](https://github.com/wonderful-panda/vue-tsx-support) grammar is recommend, but SFC is also supported.
 
-See all examples in [online example](https://marsprince.github.io/slate-vue).
+Most of the usage is same with [slate-react](https://github.com/ianstormtaylor/slate/tree/master/packages/slate-react). Here are same difference as guideline:
 
-See all example code in [pages](https://github.com/marsprince/slate-vue/tree/master/site/pages)
+## Guideline
 
-## Issues
+### get editor instance
 
-You can use this [codesandbox template](https://codesandbox.io/s/2984l) to reproduce problems.
+```javascript
+this.$editor
+```
 
-## Environment Support
+If you want to apply some plugins(e.g. slate-history), use editorCreated hook:
 
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)<br>Safari |
-| --- | --- | --- | --- |
-| testing | testing | 86.0+ | testing |
+```javascript
+Vue.use(SlatePlugin, {
+  editorCreated(editor) {
+    withHistory(editor)
+  }
+})
+```
 
-## License
+It will be called after each editor created.
 
-[MIT](LICENSE) © marsprince
+### renderElement, renderLeaf
+
+ReturnType must be any legal type which is equal with the first argument in Vue's createElement, please [see](https://vuejs.org/v2/guide/render-function.html#createElement-Arguments).
+
+### select, focus , readonly
+
+use Vue.mixin
+```javascript
+import {SelectedMixin, FocusedMixin, ReadOnlyMixin} from 'slate-vue'
+```
+And you will get selected, focused, readOnly data in your component
+
+### useEffect, useRef
+
+```javascript
+import {useEffect, useRef} from 'slate-vue'
+```
+
+Same as react hooks. Forked from [vue-hooks](https://github.com/yyx990803/vue-hooks).
+
+### fragment
+
+```javascript
+import {fragment} from 'slate-vue'
+```
+
+Forked from [vue-fragment](https://github.com/Thunberg087/vue-fragment)
+
+### VueEditor
+
+```javascript
+import {VueEditor} from 'slate-vue'
+```
+
+Same api with [react-editor](https://docs.slatejs.org/libraries/slate-react#reacteditor)
+
+## Problems
+
+### Doesn't change?
+
+If your component is related to the editor(like toolbar), you must add slateMixin for rerender:
+
+```javascript
+import {SlateMixin} from 'slate-vue'
+```

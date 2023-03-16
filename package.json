@@ -1,6 +1,10 @@
 {
   "private": true,
   "name": "slate-vue-packages",
+  "version": "0.2.0",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.es.js",
+  "license": "MIT",
   "workspaces": [
     "packages/*"
   ],
@@ -49,7 +53,11 @@
     "slate-history": "^0.59.0",
     "slate-hyperscript": "^0.59.0",
     "vue": "^2.6.11",
-    "vue-router": "^3.2.0"
+    "vue-router": "^3.2.0",
+    "direction": "^1.0.4",
+    "is-hotkey": "^0.1.6",
+    "slate": "^0.59.0",
+    "vue-tsx-support": "^3.0.0"
   },
   "config": {
     "commitizen": {
