@@ -1,1 +1,0 @@
-export { EditableComponent } from './editable'
