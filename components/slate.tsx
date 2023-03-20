@@ -1,6 +1,6 @@
 /**
  * A wrapper around the provider to handle `onChange` events, because the $editor
- * is a mutable singleton so it won't ever register as "changed" otherwise.
+ * is a mutable singleton, so it won't ever register as "changed" otherwise.
  */
 import * as tsx from 'vue-tsx-support'
 import {EDITOR_TO_ON_CHANGE} from 'kessel-slate-vue-shared';

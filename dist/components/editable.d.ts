@@ -1,0 +1,80 @@
+import * as tsx from "vue-tsx-support";
+import { DOMStaticRange } from 'kessel-slate-vue-shared';
+import { UseRef } from '../types';
+interface IEvent extends Event {
+    data: string | null;
+    dataTransfer: DataTransfer | null;
+    getTargetRanges(): DOMStaticRange[];
+    inputType: string;
+    isComposing: boolean;
+}
+interface EditableData {
+    latestElement: null | Element;
+    isComposing: boolean;
+    isUpdatingSelection: boolean;
+}
+export declare const Editable: tsx._TsxComponentV3<import("vue").default & EditableData & UseRef & {
+    _onClick(event: IEvent): void;
+    onSelectionchange(): void;
+    _onBeforeInput(event: IEvent): void;
+    _onCompositionEnd(event: any): void;
+    _onCompositionStart(event: IEvent): void;
+    _onKeyDown(event: any): void;
+    _onFocus(event: any): void;
+    _onBlur(event: any): void;
+    _onCopy(event: any): void;
+    _onPaste(event: any): void;
+    _onCut(event: any): void;
+    _onDragOver(event: any): void;
+    _onDragStart(event: any): void;
+    _onDrop(event: any): void;
+} & {
+    autoFocus: boolean;
+    renderLeaf: Function;
+    renderElement: Function;
+    readOnly: boolean;
+    decorate: Function | never[];
+    placeholder: string;
+    spellCheck: boolean;
+    autoCorrect: string;
+    autoCapitalize: string;
+    onBeforeInput: (event: any) => void;
+    onKeyDown: (event: any) => void;
+    onClick: (event: any) => void;
+    onCompositionEnd: (event: any) => void;
+    onCompositionStart: (event: any) => void;
+    onCut: (event: any) => void;
+    onCopy: (event: any) => void;
+    onDragOver: (event: any) => void;
+    onDragStart: (event: any) => void;
+    onDragStop: (event: any) => void;
+    onPaste: (event: any) => void;
+    onFocus: (event: any) => void;
+    onBlur: (event: any) => void;
+    onDrop: (event: any) => void;
+}, {}, {} & {
+    autoFocus?: boolean | undefined;
+    renderLeaf?: Function | undefined;
+    renderElement?: Function | undefined;
+    readOnly?: boolean | undefined;
+    decorate?: Function | never[] | undefined;
+    placeholder?: string | undefined;
+    spellCheck?: boolean | undefined;
+    autoCorrect?: string | undefined;
+    autoCapitalize?: string | undefined;
+    onBeforeInput?: ((event: any) => void) | undefined;
+    onKeyDown?: ((event: any) => void) | undefined;
+    onClick?: ((event: any) => void) | undefined;
+    onCompositionEnd?: ((event: any) => void) | undefined;
+    onCompositionStart?: ((event: any) => void) | undefined;
+    onCut?: ((event: any) => void) | undefined;
+    onCopy?: ((event: any) => void) | undefined;
+    onDragOver?: ((event: any) => void) | undefined;
+    onDragStart?: ((event: any) => void) | undefined;
+    onDragStop?: ((event: any) => void) | undefined;
+    onPaste?: ((event: any) => void) | undefined;
+    onFocus?: ((event: any) => void) | undefined;
+    onBlur?: ((event: any) => void) | undefined;
+    onDrop?: ((event: any) => void) | undefined;
+}, {}, {}, {}>;
+export {};

@@ -265,7 +265,7 @@ export const Editable = tsx.component({
               newDomRange.endOffset
             )
           }
-          const leafEl = newDomRange.startContainer.parentElement!
+          //const leafEl = newDomRange.startContainer.parentElement!
           // scrollIntoView(leafEl, {
           //   scrollMode: 'if-needed',
           //   boundary: el,
