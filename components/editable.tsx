@@ -5,7 +5,7 @@ import {IS_FOCUSED, EDITOR_TO_ELEMENT, NODE_TO_ELEMENT, ELEMENT_TO_NODE, IS_READ
 import {DOMNode, isDOMNode, isDOMElement, isDOMText, isPlainTextOnlyPaste} from '../utils/dom';
 import {Transforms, Range, Editor, Element} from 'slate';
 import {DOMStaticRange} from '../utils/dom';
-import {IS_FIREFOX, IS_SAFARI, IS_EDGE_LEGACY} from '../utils/environment'
+import {IS_FIREFOX, IS_SAFARI, IS_FIREFOX_LEGACY, HAS_BEFORE_INPUT_SUPPORT} from '../utils/environment'
 import Hotkeys from '../utils/hotkeys'
 import {addOnBeforeInput} from '../utils/beforeInput';
 
@@ -18,9 +18,6 @@ interface IEvent extends Event {
   inputType: string
   isComposing: boolean
 }
-
-// COMPAT: Firefox/Edge Legacy don't support the `beforeinput` event
-const HAS_BEFORE_INPUT_SUPPORT = !(IS_FIREFOX || IS_EDGE_LEGACY)
 
 /**
  * Check if the target is inside void and in the editor.
@@ -222,7 +219,9 @@ export const Editable = tsx.component({
     _onBeforeInput(event: IEvent) {
       const editor = (this as any).$editor;
       // in FireFox, we use a dispatchEvent and only support insertData
-      if (IS_FIREFOX) {
+      console.log('onBeforeInput', event);
+      console.log('isfirefox', IS_FIREFOX_LEGACY);
+      if (IS_FIREFOX_LEGACY) {
         event.preventDefault()
         event.stopPropagation()
         const text = (event as any).detail as string
@@ -773,6 +772,17 @@ export const Editable = tsx.component({
     const initListener = () => {
       // Attach a native DOM event handler for `selectionchange`
       useEffect(() => {
+        if (HAS_BEFORE_INPUT_SUPPORT) {
+          document.addEventListener('beforeinput', this.onBeforeInput)
+        }
+        return () => {
+          if (HAS_BEFORE_INPUT_SUPPORT) {
+            document.removeEventListener('beforeinput', this.onBeforeInput)
+          }
+        }
+      });
+
+      useEffect(() => {
         document.addEventListener('selectionchange', (this as any).onSelectionchange)
         return () => {
           document.removeEventListener('selectionchange', (this as any).onSelectionchange)
@@ -873,7 +883,7 @@ export const Editable = tsx.component({
         setTimeout(() => {
           // COMPAT: In Firefox, it's not enough to create a range, you also need
           // to focus the contenteditable element too. (2016/11/16)
-          if (newDomRange && IS_FIREFOX) {
+          if (newDomRange && IS_FIREFOX_LEGACY) {
             el.focus()
           }
 
@@ -892,7 +902,7 @@ export const Editable = tsx.component({
     // needs to be manually focused.
     updateAutoFocus();
     // patch beforeinput in FireFox
-    if (IS_FIREFOX) {
+    if (IS_FIREFOX_LEGACY) {
       useEffect(() => {
         addOnBeforeInput(ref.current, true)
       }, [])
