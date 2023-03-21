@@ -8,6 +8,7 @@ import {DOMStaticRange} from '../utils/dom';
 import {IS_FIREFOX, IS_SAFARI, IS_FIREFOX_LEGACY, HAS_BEFORE_INPUT_SUPPORT} from '../utils/environment'
 import Hotkeys from '../utils/hotkeys'
 import {addOnBeforeInput} from '../utils/beforeInput';
+import {PropType} from "vue";
 
 interface IEvent extends Event {
   data: string | null
@@ -102,6 +103,9 @@ const getPlainText = (domNode: DOMNode) => {
 
   return text
 }
+
+type PropsEventListener = PropType<(event: any) => void>
+
 // the contentEditable div
 export const Editable = tsx.component({
   // some global props will provide for child component
@@ -120,19 +124,48 @@ export const Editable = tsx.component({
     autoCapitalize: String,
 
     // user event
-    onBeforeInput: Function,
-    onKeyDown: Function,
-    onClick: Function,
-    onCompositionEnd: Function,
-    onCompositionStart: Function,
-    onCut: Function,
-    onCopy: Function,
-    onDragOver: Function,
-    onDragStart: Function,
-    onDragStop: Function,
-    onPaste: Function,
-    onFocus: Function,
-    onBlur: Function
+    onBeforeInput: {
+      type: Function as PropsEventListener
+    },
+    onKeyDown: {
+      type: Function as PropsEventListener
+    },
+    onClick: {
+      type: Function as PropsEventListener
+    },
+    onCompositionEnd: {
+      type: Function as PropsEventListener
+    },
+    onCompositionStart: {
+      type: Function as PropsEventListener
+    },
+    onCut: {
+      type: Function as PropsEventListener
+    },
+    onCopy: {
+      type: Function as PropsEventListener
+    },
+    onDragOver: {
+      type: Function as PropsEventListener
+    },
+    onDragStart: {
+      type: Function as PropsEventListener
+    },
+    onDragStop: {
+      type: Function as PropsEventListener
+    },
+    onPaste: {
+      type: Function as PropsEventListener
+    },
+    onFocus: {
+      type: Function as PropsEventListener
+    },
+    onBlur: {
+      type: Function as PropsEventListener
+    },
+    onDrop: {
+      type: Function as PropsEventListener
+    },
   },
   components: {
     Children
