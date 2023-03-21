@@ -12,8 +12,9 @@ const freeze = (object: any, property: any, value: any) => {
 const unfreeze = (object: any, property: any, value: any = null) => {
   Object.defineProperty(object, property, {
     configurable: true,
-    writable: true,
-    value: value
+    value: value,
+    get() { return value; },
+    set(v) { value = v; }
   });
 };
 
