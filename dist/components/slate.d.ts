@@ -4,20 +4,18 @@
  */
 import * as tsx from 'vue-tsx-support';
 import Vue from 'vue';
-interface SlateData {
-    name: string | null;
-}
-export declare const Slate: tsx._TsxComponentV3<Vue & SlateData & {
+export declare const Slate: tsx._TsxComponentV3<Vue & {
+    name: null;
+} & {
     genUid(): string;
     /**
      * force slate render by change fragment name
      * @param newVal
      */
-    renderSlate(newVal?: any): void;
+    renderSlate(newVal: any): void;
     clearEditor(): void;
 } & {
     value: string;
 }, {}, {} & {
     value?: string | undefined;
 }, {}, {}, {}>;
-export {};

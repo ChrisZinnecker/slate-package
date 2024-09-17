@@ -12,7 +12,7 @@ import {
   NODE_TO_ELEMENT,
   ELEMENT_TO_NODE, PLACEHOLDER_SYMBOL,
 } from '../utils/weak-maps';
-import { useRef, useEffect } from '../plugins';
+import { useRef, useEffect } from '../plugins/vue-hooks';
 
 /**
  * Text.
@@ -56,7 +56,7 @@ const Text = tsx.component({
 
     initRef()
   },
-  render() {
+  render(h, ctx) {
     const { text, placeholder } = this as any
     let decorations: any = this.decorations;
     if(!decorations) {

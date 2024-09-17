@@ -1,13 +1,12 @@
 import * as tsx from "vue-tsx-support";
-import { providedByText } from '../types';
 /**
  * Leaf content strings.
  */
-declare const string: tsx._TsxComponentV3<import("vue").default & providedByText & {
-    leaf: import("slate").BaseText;
+declare const string: tsx._TsxComponentV3<import("vue").default & {
+    leaf: any;
     editor: any;
 }, {}, {} & {
-    leaf?: import("slate").BaseText | undefined;
+    leaf?: any;
     editor?: any;
 }, {}, {}, {}>;
 export default string;

@@ -1,17 +1,16 @@
 import * as tsx from 'vue-tsx-support';
-import { providedByEditable, UseRef } from '../types';
 /**
  * Text.
  */
-declare const Text: tsx._TsxComponentV3<import("vue").default & Pick<providedByEditable, "placeholder" | "decorate"> & UseRef & {
-    text: import("slate").BaseText;
+declare const Text: tsx._TsxComponentV3<import("vue").default & {
+    text: any;
     isLast: boolean;
-    parent: import("slate").BaseElement;
-    decorations: import("slate").BaseRange[];
+    parent: any;
+    decorations: unknown[];
 }, {}, {} & {
-    text?: import("slate").BaseText | undefined;
+    text?: any;
     isLast?: boolean | undefined;
-    parent?: import("slate").BaseElement | undefined;
-    decorations?: import("slate").BaseRange[] | undefined;
+    parent?: any;
+    decorations?: unknown[] | undefined;
 }, {}, {}, {}>;
 export default Text;

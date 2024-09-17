@@ -1,13 +1,12 @@
 import * as tsx from 'vue-tsx-support';
-import { providedByEditable } from '../types';
 /**
  * Individual leaves in a text node with unique formatting.
  */
-declare const Leaf: tsx._TsxComponentV3<import("vue").default & Pick<providedByEditable, "renderLeaf"> & {
-    text: import("slate").BaseText;
-    leaf: import("slate").BaseText;
+declare const Leaf: tsx._TsxComponentV3<import("vue").default & {
+    text: any;
+    leaf: any;
 }, {}, {} & {
-    text?: import("slate").BaseText | undefined;
-    leaf?: import("slate").BaseText | undefined;
+    text?: any;
+    leaf?: any;
 }, {}, {}, {}>;
 export default Leaf;

@@ -1,35 +1,28 @@
 import "vue-tsx-support/enable-check";
-import Vue, { RenderContext, VueConstructor } from 'vue';
-import { VueEditor } from './plugins';
-import { Node, Path } from 'Slate';
-import { RenderLeafProps, RenderElementProps } from 'slate-vue-shared';
+import Vue, { RenderContext } from 'vue';
 declare module 'vue/types/options' {
     interface ComponentOptions<V extends Vue> {
         hooks?: Function;
         abstract?: Boolean;
     }
 }
-declare module 'vue/types/vue' {
-    interface Vue {
-        $editor: VueEditor;
-    }
+export interface RenderElementProps {
+    children: any;
+    element: Element;
+    attributes: {
+        'data-slate-node': 'element';
+        'data-slate-inline'?: true;
+        'data-slate-void'?: true;
+        dir?: 'rtl';
+        ref: any;
+    };
 }
-export interface providedByEditable {
-    readOnly?: boolean;
-    placeholder?: string | boolean;
-    renderLeaf?: (props: RenderLeafProps) => VueConstructor;
-    renderElement?: (props: RenderElementProps) => VueConstructor;
-    decorate?: (props: [Node, Path]) => Array<any>;
-}
-export interface providedByText {
-    isLast?: boolean;
-    text?: Node;
-    parent?: Node;
-}
-export interface UseRef {
-    ref: null | {
-        current: any;
-        id: string;
+export interface RenderLeafProps {
+    children: any;
+    leaf: Text;
+    text: Text;
+    attributes: {
+        'data-slate-leaf': true;
     };
 }
 declare type Maybe<T> = T | undefined | null;

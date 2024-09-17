@@ -252,6 +252,8 @@ export const Editable = tsx.component({
     _onBeforeInput(event: IEvent) {
       const editor = (this as any).$editor;
       // in FireFox, we use a dispatchEvent and only support insertData
+      console.log('onBeforeInput', event);
+      console.log('isfirefox', IS_FIREFOX_LEGACY);
       if (IS_FIREFOX_LEGACY) {
         event.preventDefault()
         event.stopPropagation()
