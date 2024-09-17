@@ -142,8 +142,8 @@ function getFallbackBeforeInputChars(
         // is 2, the property `which` does not represent an emoji correctly.
         // In such a case, we directly return the `char` property instead of
         // using `which`.
-        if (nativeEvent.char && nativeEvent.char.length > 1) {
-          return nativeEvent.char;
+        if (nativeEvent.key && nativeEvent.key.length > 1) {
+          return nativeEvent.key;
         } else if (nativeEvent.key) {
           return nativeEvent.key;
         }
