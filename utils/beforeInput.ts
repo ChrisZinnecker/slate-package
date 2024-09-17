@@ -19,7 +19,8 @@ const canUseDOM: boolean =
   typeof window.document !== 'undefined' &&
   typeof window.document.createElement !== 'undefined'
 
-const SPACEBAR_CODE = 'Space';
+const SPACEBAR_CODE = 32;
+const SPACEBAR_CHAR = String.fromCharCode(SPACEBAR_CODE);
 
 // Track the current IME composition status, if any.
 let isComposing = false;
@@ -69,13 +70,13 @@ const getNativeBeforeInputChars = (
        * To avoid this issue, use the keypress event as if no `textInput`
        * event is available.
        */
-      const code = nativeEvent.code;
-      if (code !== SPACEBAR_CODE) {
-        return nativeEvent.key;
+      const which = nativeEvent.which;
+      if (which !== SPACEBAR_CODE) {
+        return null;
       }
 
       hasSpaceKeypress = true;
-      return nativeEvent.key;
+      return SPACEBAR_CHAR;
 
     case 'textInput':
       // Record the characters to be added to the DOM.
@@ -84,7 +85,7 @@ const getNativeBeforeInputChars = (
       // If it's a spacebar character, assume that we have already handled
       // it at the keypress level and bail immediately. Android Chrome
       // doesn't give us keycodes, so we need to ignore it.
-      if (chars === ' ' && hasSpaceKeypress) {
+      if (chars === SPACEBAR_CHAR && hasSpaceKeypress) {
         return null;
       }
 
@@ -142,10 +143,10 @@ function getFallbackBeforeInputChars(
         // is 2, the property `which` does not represent an emoji correctly.
         // In such a case, we directly return the `char` property instead of
         // using `which`.
-        if (nativeEvent.key && nativeEvent.key.length > 1) {
-          return nativeEvent.key;
-        } else if (nativeEvent.key) {
-          return nativeEvent.key;
+        if (nativeEvent.char && nativeEvent.char.length > 1) {
+          return nativeEvent.char;
+        } else if (nativeEvent.which) {
+          return String.fromCharCode(nativeEvent.which);
         }
       }
       return null;
