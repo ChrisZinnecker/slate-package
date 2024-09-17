@@ -4,7 +4,7 @@
   "dependencies": {
     "direction": "^1.0.4",
     "is-hotkey": "^0.1.6",
-    "slate": "^0.59.0",
+    "slate": "^0.91.4",
     "vue": "^2.6.11",
     "vue-tsx-support": "^3.0.0"
   },

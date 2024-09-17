@@ -21,7 +21,7 @@ const TextString = tsx.component({
   render() {
     const { text, isTrailing = false } = this
     return (
-        <span data-slate-string>
+        <span data-slate-string="">
         {text}
           {isTrailing ? '\n' : null}
       </span>

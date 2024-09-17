@@ -1,5 +1,4 @@
 /**
  * Children.
  */
-declare const Children: any;
-export default Children;
+export declare const Children: any;
